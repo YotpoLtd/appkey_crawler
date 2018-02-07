@@ -1,5 +1,6 @@
 require 'open-uri'
 require 'open_uri_redirections'
+require 'csv'
 
 app_keys = {}
 
@@ -33,9 +34,13 @@ end
 
 puts "\n"
 
-app_keys.each do |url, ak|
-  puts "#{url}: #{ak}"
+CSV.open("urls_and_appkeys.csv", "wb") do |csv|
+  app_keys.each do |url, ak|
+    csv << [url, ak]
+    puts "#{url}: #{ak}"
+  end
 end
+
 
 
 
