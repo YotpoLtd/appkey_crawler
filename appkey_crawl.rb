@@ -15,22 +15,22 @@ if ARGV.length == 1 && ARGV[0].include?(".csv")
 else
   urls = ARGV
 end
+hydra = Typhoeus::Hydra.new
 
 urls.each_slice(IN_PARALLEL) do |slice_urls|
   p "working on #{IN_PARALLEL} requests in parallel"
-  hydra = Typhoeus::Hydra.new
+
   requests = []
 
   slice_urls.each do |url|
     if url.is_a?(Array)
       url = url[0]
     end
-    request = Typhoeus::Request.new(url, followlocation: true)
+    request = Typhoeus::Request.new(url, followlocation: true, timeout: 10)
     hydra.queue(request)
     requests << [url,request]
 
   end
-  
   hydra.run
   requests.each do |url,resopnse|
     html = resopnse.response.body
@@ -42,8 +42,6 @@ urls.each_slice(IN_PARALLEL) do |slice_urls|
     end
     puts "#{url}: #{app_key}"
   end
-
-
 
 end
 
